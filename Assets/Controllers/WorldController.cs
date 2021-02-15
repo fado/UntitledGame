@@ -18,6 +18,8 @@ public class WorldController : MonoBehaviour {
                 GameObject tileGameObject = new GameObject();
                 tileGameObject.name = $"Tile_{x}_{y}";
                 tileGameObject.transform.position = new Vector3(tileData.X, tileData.Y, 0);
+                tileGameObject.transform.SetParent(this.transform, true);
+
                 tileGameObject.AddComponent<SpriteRenderer>();
 
                 tileData.RegisterTileTypeChangedCallback( (tile) => { OnTileTypeChanged(tile, tileGameObject); } );
