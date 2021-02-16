@@ -7,6 +7,7 @@ public class MouseController : MonoBehaviour {
     public GameObject circleCursor;
 
     Vector3 mousePositionLastFrame;
+    Vector3 dragStartPosition;
 
     private const int RightMouseButton = 0;
     private const int LeftMouseButton = 1;
@@ -35,15 +36,43 @@ public class MouseController : MonoBehaviour {
             circleCursor.SetActive(false);
         }
 
-        // Handle right mouse clicks.
+        // Start selection drag.
+        if(Input.GetMouseButtonDown(RightMouseButton)) {
+            dragStartPosition = mousePositionCurrentFrame;
+        }
+        
+        // End selection drag.
         if(Input.GetMouseButtonUp(RightMouseButton)) {
-            if(tileUnderMouse != null) {
-                if(tileUnderMouse.Type == Tile.TileType.Empty) {
-                    tileUnderMouse.Type = Tile.TileType.Floor;
-                } else {
-                    tileUnderMouse.Type = Tile.TileType.Empty;
+            int startX = Mathf.FloorToInt(dragStartPosition.x);
+            int endX = Mathf.FloorToInt(mousePositionCurrentFrame.x);
+
+            // If we're dragging down and/or left we need to invert these so that the loop works correctly.
+            if(endX < startX) {
+                int tmp = endX;
+                endX = startX;
+                startX = tmp;
+            }
+            
+            int startY = Mathf.FloorToInt(dragStartPosition.y);
+            int endY = Mathf.FloorToInt(mousePositionCurrentFrame.y);
+
+            // If we're dragging down and/or left we need to invert these so that the loop works correctly.
+            if(endY < startY) {
+                int tmp = endY;
+                endY = startY;
+                startY = tmp;
+            }
+
+            // Loop over all the tiles we've selected.
+            for(int x = startX; x <= endX; x++) {
+                for(int y = startY; y <= endY; y++) {
+                    Tile tile = WorldController.Instance.World.GetTileAt(x, y);
+                    if(tile != null) {
+                        tile.Type = Tile.TileType.Floor;
+                    }
                 }
             }
+
         }
         
         // Handle camera dragging.
