@@ -55,10 +55,12 @@ public class WorldController : MonoBehaviour {
     // SpriteRenderer.
     void OnTileTypeChanged(Tile tileData) {
 
+        GameObject tileGameObject = tileGameObjectMap[tileData];
+
         if(tileData.Type == Tile.TileType.Floor) {
-            tileGameObjectMap[tileData].GetComponent<SpriteRenderer>().sprite = floorSprite;
+            tileGameObject.GetComponent<SpriteRenderer>().sprite = floorSprite;
         } else if (tileData.Type == Tile.TileType.Empty) {
-            tileGameObjectMap[tileData].GetComponent<SpriteRenderer>().sprite = null;
+            tileGameObject.GetComponent<SpriteRenderer>().sprite = null;
         } else {
             Debug.LogError("OnTileTypeChanged - Unrecognised tile type.");
         }
