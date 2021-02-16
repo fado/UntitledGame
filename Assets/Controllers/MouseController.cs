@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+
 
 public class MouseController : MonoBehaviour {
 
     public GameObject circleCursorPrefab;
+
+    Tile.TileType buildModeTile = Tile.TileType.Floor;
 
     Vector3 mousePositionLastFrame;
     Vector3 mousePositionCurrentFrame;
@@ -46,6 +50,11 @@ public class MouseController : MonoBehaviour {
     }
 
     void UpdateDragSelection() {
+        // Return if we're over a UI element.
+        if(EventSystem.current.IsPointerOverGameObject()) {
+            return;
+        }
+
         // Start selection drag.
         if(Input.GetMouseButtonDown(RIGHT_MOUSE_BUTTON)) {
             dragStartPosition = mousePositionCurrentFrame;
@@ -97,7 +106,7 @@ public class MouseController : MonoBehaviour {
                 for(int y = startY; y <= endY; y++) {
                     Tile tile = WorldController.Instance.World.GetTileAt(x, y);
                     if(tile != null) {
-                        tile.Type = Tile.TileType.Floor;
+                        tile.Type = buildModeTile;
                     }
                 }
             }
@@ -105,17 +114,12 @@ public class MouseController : MonoBehaviour {
         }
     }
 
-    // void UpdateCursor() {
-    //     // Update the circle cursor position.
-    //     Tile tileUnderMouse = WorldController.Instance.GetTileAtWorldCoord(mousePositionCurrentFrame);
-    //     if(tileUnderMouse != null) {
-    //         circleCursor.SetActive(true);
-    //         Vector3 cursorPosition = new Vector3(tileUnderMouse.X, tileUnderMouse.Y, 0);
-    //         circleCursor.transform.position = cursorPosition;
-    //     } else {
-    //         // Hide the cursor when it's out of range.
-    //         circleCursor.SetActive(false);
-    //     }
-    // }
+    public void SetModeBuildFloor() {
+        buildModeTile = Tile.TileType.Floor;
+    }
+
+    public void SetModeBulldoze() {
+        buildModeTile = Tile.TileType.Empty;
+    }
 
 }
