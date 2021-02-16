@@ -24,7 +24,15 @@ public class MouseController : MonoBehaviour {
         mousePositionCurrentFrame.z = 0;
 
         // Update the circle cursor position.
-        circleCursor.transform.position = mousePositionCurrentFrame;
+        Tile tileUnderMouse = GetTileAtWorldCoord(mousePositionCurrentFrame);
+        if(tileUnderMouse != null) {
+            circleCursor.SetActive(true);
+            Vector3 cursorPosition = new Vector3(tileUnderMouse.X, tileUnderMouse.Y, 0);
+            circleCursor.transform.position = cursorPosition;
+        } else {
+            // Hide the cursor when it's out of range.
+            circleCursor.SetActive(false);
+        }
         
         // Handle camera dragging.
         if(Input.GetMouseButton(LeftMouseButton) || Input.GetMouseButton(MiddleMouseButton)) {
@@ -35,5 +43,12 @@ public class MouseController : MonoBehaviour {
         mousePositionLastFrame = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         // Need to set the z-level to zero or the cursor won't be visible.
         mousePositionLastFrame.z = 0;
+    }
+
+    Tile GetTileAtWorldCoord(Vector3 coord) {
+        int x = Mathf.FloorToInt(coord.x);
+        int y = Mathf.FloorToInt(coord.y);
+
+        return WorldController.Instance.World.GetTileAt(x, y);
     }
 }

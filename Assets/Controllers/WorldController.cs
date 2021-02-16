@@ -4,16 +4,25 @@ using UnityEngine;
 
 public class WorldController : MonoBehaviour {
 
+    static WorldController _instance;
+    public static WorldController Instance { get; protected set; }
+
     public Sprite floorSprite;
-    World world;
+    public World World { get; protected set; }
 
     // Start is called before the first frame update
     void Start() {
-        world = new World();
 
-        for(int x = 0; x < world.Width; x++) {
-            for(int y = 0; y < world.Height; y++) {
-                Tile tileData = world.GetTileAt(x, y);
+        if(Instance != null) {
+            Debug.LogError("There should never be two world controllers.");
+        }
+        Instance = this;
+
+        World = new World();
+
+        for(int x = 0; x < World.Width; x++) {
+            for(int y = 0; y < World.Height; y++) {
+                Tile tileData = World.GetTileAt(x, y);
                 
                 GameObject tileGameObject = new GameObject();
                 tileGameObject.name = $"Tile_{x}_{y}";
@@ -26,7 +35,7 @@ public class WorldController : MonoBehaviour {
             }
         }
 
-        world.RandomizeTiles();
+        World.RandomizeTiles();
     }
 
     // Update is called once per frame
