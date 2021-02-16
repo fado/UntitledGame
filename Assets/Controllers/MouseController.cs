@@ -69,7 +69,7 @@ public class MouseController : MonoBehaviour {
         while(dragPreviewGameObjects.Count > 0) {
             GameObject gameObject = dragPreviewGameObjects[0];
             dragPreviewGameObjects.RemoveAt(0);
-            Destroy(gameObject);
+            SimplePool.Despawn(gameObject);
         }
 
         if(Input.GetMouseButton(RIGHT_MOUSE_BUTTON)) {
@@ -79,7 +79,8 @@ public class MouseController : MonoBehaviour {
                     Tile tile = WorldController.Instance.World.GetTileAt(x, y);
                     if(tile != null) {
                         // Display the building hint on top of this tile position.
-                        GameObject gameObject = (GameObject)Instantiate(circleCursorPrefab, new Vector3(x, y, 0), Quaternion.identity);
+                        GameObject gameObject = SimplePool.Spawn(circleCursorPrefab, new Vector3(x, y, 0), Quaternion.identity);
+                        gameObject.transform.SetParent(this.transform, true);
                         dragPreviewGameObjects.Add(gameObject);
                     }
                 }
