@@ -8,6 +8,7 @@ public class MouseController : MonoBehaviour {
 
     Vector3 mousePositionLastFrame;
 
+    private const int RightMouseButton = 0;
     private const int LeftMouseButton = 1;
     private const int MiddleMouseButton = 2;
 
@@ -32,6 +33,17 @@ public class MouseController : MonoBehaviour {
         } else {
             // Hide the cursor when it's out of range.
             circleCursor.SetActive(false);
+        }
+
+        // Handle right mouse clicks.
+        if(Input.GetMouseButtonUp(RightMouseButton)) {
+            if(tileUnderMouse != null) {
+                if(tileUnderMouse.Type == Tile.TileType.Empty) {
+                    tileUnderMouse.Type = Tile.TileType.Floor;
+                } else {
+                    tileUnderMouse.Type = Tile.TileType.Empty;
+                }
+            }
         }
         
         // Handle camera dragging.
