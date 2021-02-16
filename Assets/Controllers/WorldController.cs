@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class WorldController : MonoBehaviour {
 
-    static WorldController _instance;
     public static WorldController Instance { get; protected set; }
 
     public Sprite floorSprite;
@@ -43,11 +42,10 @@ public class WorldController : MonoBehaviour {
 
     }
 
-    /* 
-        Callback function that we set on each tile. Whenever the tile's type changes,
-        this function will be called so that the correct sprite gets set on the 
-        SpriteRenderer.
-     */
+     
+    // Callback function that we set on each tile. Whenever the tile's type changes,
+    // this function will be called so that the correct sprite gets set on the 
+    // SpriteRenderer.
     void OnTileTypeChanged(Tile tileData, GameObject tileGameObject) {
 
         if(tileData.Type == Tile.TileType.Floor) {
@@ -58,5 +56,12 @@ public class WorldController : MonoBehaviour {
             Debug.LogError("OnTileTypeChanged - Unrecognised tile type.");
         }
 
+    }
+
+    public Tile GetTileAtWorldCoord(Vector3 coord) {
+        int x = Mathf.FloorToInt(coord.x);
+        int y = Mathf.FloorToInt(coord.y);
+
+        return World.GetTileAt(x, y);
     }
 }

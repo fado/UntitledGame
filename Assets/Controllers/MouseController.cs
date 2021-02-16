@@ -7,6 +7,7 @@ public class MouseController : MonoBehaviour {
     public GameObject circleCursor;
 
     Vector3 mousePositionLastFrame;
+    Vector3 mousePositionCurrentFrame;
     Vector3 dragStartPosition;
 
     private const int RightMouseButton = 0;
@@ -20,22 +21,26 @@ public class MouseController : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        
-        Vector3 mousePositionCurrentFrame = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        // Need to set the z-level to zero or the cursor won't be visible.
+        mousePositionCurrentFrame = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePositionCurrentFrame.z = 0;
 
-        // Update the circle cursor position.
-        Tile tileUnderMouse = GetTileAtWorldCoord(mousePositionCurrentFrame);
-        if(tileUnderMouse != null) {
-            circleCursor.SetActive(true);
-            Vector3 cursorPosition = new Vector3(tileUnderMouse.X, tileUnderMouse.Y, 0);
-            circleCursor.transform.position = cursorPosition;
-        } else {
-            // Hide the cursor when it's out of range.
-            circleCursor.SetActive(false);
-        }
+        UpdateCursor();
+        UpdateDragSelection();
+        UpdateCameraMovement();
 
+        mousePositionLastFrame = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePositionLastFrame.z = 0;
+    }
+
+    void UpdateCameraMovement() {
+        // Handle camera dragging.
+        if(Input.GetMouseButton(LeftMouseButton) || Input.GetMouseButton(MiddleMouseButton)) {
+            Vector3 diff = mousePositionLastFrame - mousePositionCurrentFrame;
+            Camera.main.transform.Translate(diff);
+        }
+    }
+
+    void UpdateDragSelection() {
         // Start selection drag.
         if(Input.GetMouseButtonDown(RightMouseButton)) {
             dragStartPosition = mousePositionCurrentFrame;
@@ -45,6 +50,8 @@ public class MouseController : MonoBehaviour {
         if(Input.GetMouseButtonUp(RightMouseButton)) {
             int startX = Mathf.FloorToInt(dragStartPosition.x);
             int endX = Mathf.FloorToInt(mousePositionCurrentFrame.x);
+            int startY = Mathf.FloorToInt(dragStartPosition.y);
+            int endY = Mathf.FloorToInt(mousePositionCurrentFrame.y);
 
             // If we're dragging down and/or left we need to invert these so that the loop works correctly.
             if(endX < startX) {
@@ -52,11 +59,6 @@ public class MouseController : MonoBehaviour {
                 endX = startX;
                 startX = tmp;
             }
-            
-            int startY = Mathf.FloorToInt(dragStartPosition.y);
-            int endY = Mathf.FloorToInt(mousePositionCurrentFrame.y);
-
-            // If we're dragging down and/or left we need to invert these so that the loop works correctly.
             if(endY < startY) {
                 int tmp = endY;
                 endY = startY;
@@ -74,22 +76,19 @@ public class MouseController : MonoBehaviour {
             }
 
         }
-        
-        // Handle camera dragging.
-        if(Input.GetMouseButton(LeftMouseButton) || Input.GetMouseButton(MiddleMouseButton)) {
-            Vector3 diff = mousePositionLastFrame - mousePositionCurrentFrame;
-            Camera.main.transform.Translate(diff);
+    }
+
+    void UpdateCursor() {
+        // Update the circle cursor position.
+        Tile tileUnderMouse = WorldController.Instance.GetTileAtWorldCoord(mousePositionCurrentFrame);
+        if(tileUnderMouse != null) {
+            circleCursor.SetActive(true);
+            Vector3 cursorPosition = new Vector3(tileUnderMouse.X, tileUnderMouse.Y, 0);
+            circleCursor.transform.position = cursorPosition;
+        } else {
+            // Hide the cursor when it's out of range.
+            circleCursor.SetActive(false);
         }
-
-        mousePositionLastFrame = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        // Need to set the z-level to zero or the cursor won't be visible.
-        mousePositionLastFrame.z = 0;
     }
 
-    Tile GetTileAtWorldCoord(Vector3 coord) {
-        int x = Mathf.FloorToInt(coord.x);
-        int y = Mathf.FloorToInt(coord.y);
-
-        return WorldController.Instance.World.GetTileAt(x, y);
-    }
 }
