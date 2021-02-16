@@ -7,6 +7,7 @@ public class WorldController : MonoBehaviour {
     public static WorldController Instance { get; protected set; }
 
     public Sprite floorSprite;
+    Dictionary<Tile, GameObject> tileGameObjectMap;
     public World World { get; protected set; }
 
     // Start is called before the first frame update
@@ -19,18 +20,24 @@ public class WorldController : MonoBehaviour {
 
         World = new World();
 
+        // Instantiate dicionary which maps each tile to a game object.
+        tileGameObjectMap = new Dictionary<Tile, GameObject>();
+
         for(int x = 0; x < World.Width; x++) {
             for(int y = 0; y < World.Height; y++) {
                 Tile tileData = World.GetTileAt(x, y);
                 
                 GameObject tileGameObject = new GameObject();
+
+                tileGameObjectMap.Add(tileData, tileGameObject);
+
                 tileGameObject.name = $"Tile_{x}_{y}";
                 tileGameObject.transform.position = new Vector3(tileData.X, tileData.Y, 0);
                 tileGameObject.transform.SetParent(this.transform, true);
 
                 tileGameObject.AddComponent<SpriteRenderer>();
 
-                tileData.RegisterTileTypeChangedCallback( (tile) => { OnTileTypeChanged(tile, tileGameObject); } );
+                tileData.RegisterTileTypeChangedCallback( OnTileTypeChanged );
             }
         }
 
@@ -46,12 +53,12 @@ public class WorldController : MonoBehaviour {
     // Callback function that we set on each tile. Whenever the tile's type changes,
     // this function will be called so that the correct sprite gets set on the 
     // SpriteRenderer.
-    void OnTileTypeChanged(Tile tileData, GameObject tileGameObject) {
+    void OnTileTypeChanged(Tile tileData) {
 
         if(tileData.Type == Tile.TileType.Floor) {
-            tileGameObject.GetComponent<SpriteRenderer>().sprite = floorSprite;
+            tileGameObjectMap[tileData].GetComponent<SpriteRenderer>().sprite = floorSprite;
         } else if (tileData.Type == Tile.TileType.Empty) {
-            tileGameObject.GetComponent<SpriteRenderer>().sprite = null;
+            tileGameObjectMap[tileData].GetComponent<SpriteRenderer>().sprite = null;
         } else {
             Debug.LogError("OnTileTypeChanged - Unrecognised tile type.");
         }
