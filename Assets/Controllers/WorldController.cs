@@ -55,7 +55,17 @@ public class WorldController : MonoBehaviour {
     // SpriteRenderer.
     void OnTileTypeChanged(Tile tileData) {
 
+        if(tileGameObjectMap.ContainsKey(tileData) == false) {
+            Debug.LogError("tileGameObjectMap does not contain tile data.");
+            return;
+        }
+
         GameObject tileGameObject = tileGameObjectMap[tileData];
+
+        if(tileGameObject == null) {
+            Debug.LogError("GameObject mapped to tile data was null.");
+            return;
+        }
 
         if(tileData.Type == Tile.TileType.Floor) {
             tileGameObject.GetComponent<SpriteRenderer>().sprite = floorSprite;
