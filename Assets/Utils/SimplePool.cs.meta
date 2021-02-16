@@ -1,11 +1,9 @@
 fileFormatVersion: 2
-guid: 44e530c13c93a114eacdacbeaff90812
+guid: c3cd3d9e976a9db409b71c828e01812c
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences:
-  - circleCursorPrefab: {fileID: 7146022856346504439, guid: c3ed3d1d4c33c44479bfa684d72274d0,
-      type: 3}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
