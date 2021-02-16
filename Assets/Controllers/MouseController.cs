@@ -40,6 +40,9 @@ public class MouseController : MonoBehaviour {
             Vector3 diff = mousePositionLastFrame - mousePositionCurrentFrame;
             Camera.main.transform.Translate(diff);
         }
+
+        Camera.main.orthographicSize -= Camera.main.orthographicSize * Input.GetAxis("Mouse ScrollWheel");
+        Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, 3f, 25f); // Set zoom limits.
     }
 
     void UpdateDragSelection() {
