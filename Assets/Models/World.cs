@@ -5,12 +5,12 @@ using UnityEngine;
 public class World {
     
     Tile[,] tiles;
-    int width;
-    int height;
+    public int Width { get; protected set; }
+    public int Height { get; protected set; }
 
     public World( int width = 100, int height = 100) {
-        this.width = width;
-        this.height = height;
+        this.Width = width;
+        this.Height = height;
 
         tiles = new Tile[width, height];
 
@@ -23,20 +23,8 @@ public class World {
         Debug.Log($"World created with {width*height} tiles.");
     }
 
-    public int Width {
-        get {
-            return width;
-        }
-    }
-
-    public int Height {
-        get {
-            return height;
-        }
-    }
-
     public Tile GetTileAt(int x, int y) {
-        if(x > width || x < 0 || y > height || y < 0) {
+        if(x > Width || x < 0 || y > Height || y < 0) {
             Debug.LogError($"Tile ({x},{y}) is out of range.");
             return null;
         }
@@ -45,8 +33,8 @@ public class World {
 
     public void RandomizeTiles() {
         Debug.Log("RandomizeTiles");
-        for(int x = 0; x < width; x++) {
-            for(int y = 0; y < height; y++) {
+        for(int x = 0; x < Width; x++) {
+            for(int y = 0; y < Height; y++) {
                 if(Random.Range(0, 2) == 0) {
                     tiles[x,y].Type = TileType.Empty;
                 } else {
