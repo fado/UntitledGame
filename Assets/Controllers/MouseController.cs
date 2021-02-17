@@ -8,6 +8,7 @@ public class MouseController : MonoBehaviour {
 
     public GameObject circleCursorPrefab;
 
+    bool buildModeIsObjects = false;
     TileType buildModeTile = TileType.Floor;
 
     Vector3 mousePositionLastFrame;
@@ -105,8 +106,13 @@ public class MouseController : MonoBehaviour {
             for(int x = startX; x <= endX; x++) {
                 for(int y = startY; y <= endY; y++) {
                     Tile tile = WorldController.Instance.World.GetTileAt(x, y);
+                    
                     if(tile != null) {
-                        tile.Type = buildModeTile;
+                        if(buildModeIsObjects) {
+                            
+                        } else {
+                            tile.Type = buildModeTile;
+                        }
                     }
                 }
             }
@@ -115,11 +121,17 @@ public class MouseController : MonoBehaviour {
     }
 
     public void SetModeBuildFloor() {
+        buildModeIsObjects = false;
         buildModeTile = TileType.Floor;
     }
 
     public void SetModeBulldoze() {
+        buildModeIsObjects = false;
         buildModeTile = TileType.Empty;
+    }
+
+    public void SetModeBuildWall() {
+
     }
 
 }
