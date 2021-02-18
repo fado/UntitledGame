@@ -7,7 +7,11 @@ public class WorldController : MonoBehaviour {
     public static WorldController Instance { get; protected set; }
 
     public Sprite floorSprite;
+    public Sprite wallSprite;
+    
     Dictionary<Tile, GameObject> tileGameObjectMap;
+    Dictionary<InstalledObject, GameObject> installedObjectGameObjectMap;
+
     public World World { get; protected set; }
 
     // Start is called before the first frame update
@@ -19,9 +23,13 @@ public class WorldController : MonoBehaviour {
         Instance = this;
 
         World = new World();
+        // Register a callback so that the World will tell the WorldController when an InstalledObject is created,
+        // so it can create a corresponding GameObject.
+        World.RegisterInstalledObjectCreatedCallback(OnInstalledObjectCreated);
 
         // Instantiate dicionary which maps each tile to a game object.
         tileGameObjectMap = new Dictionary<Tile, GameObject>();
+        installedObjectGameObjectMap = new Dictionary<InstalledObject, GameObject>();
 
         for(int x = 0; x < World.Width; x++) {
             for(int y = 0; y < World.Height; y++) {
@@ -82,5 +90,33 @@ public class WorldController : MonoBehaviour {
         int y = Mathf.FloorToInt(coord.y);
 
         return World.GetTileAt(x, y);
+    }
+
+    // Callback registered to the World object. Called whenever an InstalledObject is created. This
+    // allows us to create a GameObject for the InstalledObject so we can see and interact with it.
+    public void OnInstalledObjectCreated(InstalledObject obj) {
+        // Create a visual GameObject linked to this data.
+        GameObject objGameObject = new GameObject();
+
+        // Add the installed object/game object pair to the dictionary.
+        installedObjectGameObjectMap.Add(obj, objGameObject);
+
+        // Tell the game object where it should go.
+        objGameObject.name = $"{obj.objectType}_{obj.tile.X}_{obj.tile.Y}";
+        objGameObject.transform.position = new Vector3(obj.tile.X, obj.tile.Y, 0);
+        objGameObject.transform.SetParent(this.transform, true);
+
+        // Add a sprite renderer and assume it's a wall for now.
+        objGameObject.AddComponent<SpriteRenderer>().sprite = wallSprite;
+
+        // Register a callback to the WorldController here so we can update the GameObject whenever
+        // the underlying InstalledObject changes.
+        obj.RegisterOnChangedCallback(OnInstalledObjectChanged);
+    }
+
+    // Callback registered to the InstalledObject. Called whenever the object changes so that
+    // we can keep the corresponding GameObject up to date.
+    void OnInstalledObjectChanged(InstalledObject obj) {
+        Debug.LogError("OnInstalledObjectChanged - Not implemented.");
     }
 }

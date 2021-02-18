@@ -1,14 +1,16 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class InstalledObject {
 
-    Tile tile; // Base tile of the object.
-    string objectType;
+    public Tile tile {get; protected set; } // Base tile of the object.
+    public string objectType {get; protected set; }
     float movementCost; // A movementCost of zero is impassable (e.g. a wall).
     int width;
     int height;
+    Action<InstalledObject> callbackOnChanged;
 
     protected InstalledObject() {
 
@@ -41,6 +43,14 @@ public class InstalledObject {
         };
 
         return obj;
+    }
+
+    public void RegisterOnChangedCallback(Action<InstalledObject> callbackFunction) {
+        callbackOnChanged += callbackFunction;
+    }
+
+    public void UnregisterOnChangedCallback(Action<InstalledObject> callbackFunction) {
+        callbackOnChanged -= callbackFunction;
     }
 
 }
