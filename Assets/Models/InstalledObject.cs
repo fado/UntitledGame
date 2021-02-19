@@ -10,18 +10,20 @@ public class InstalledObject {
     float movementCost; // A movementCost of zero is impassable (e.g. a wall).
     int width;
     int height;
+    bool linksToNeighbour = false;
     Action<InstalledObject> callbackOnChanged;
 
     protected InstalledObject() {
 
     }
 
-    static public InstalledObject CreatePrototype( string objectType, float movementCost = 1f, int width = 1, int height = 1) {
+    static public InstalledObject CreatePrototype( string objectType, float movementCost = 1f, int width = 1, int height = 1, bool linksToNeighbour = false) {
         InstalledObject obj = new InstalledObject();
         obj.objectType = objectType;
         obj.movementCost = movementCost;
         obj.width = width;
         obj.height = height;
+        obj.linksToNeighbour = linksToNeighbour;
 
         return obj;
     }
@@ -33,6 +35,7 @@ public class InstalledObject {
         obj.movementCost = prototype.movementCost;
         obj.width = prototype.width;
         obj.height = prototype.height;
+        obj.linksToNeighbour = prototype.linksToNeighbour;
 
         obj.tile = tile;
 
