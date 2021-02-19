@@ -7,15 +7,25 @@ public class WorldController : MonoBehaviour {
     public static WorldController Instance { get; protected set; }
 
     public Sprite floorSprite;
-    public Sprite wallSprite;
     
     Dictionary<Tile, GameObject> tileGameObjectMap;
     Dictionary<InstalledObject, GameObject> installedObjectGameObjectMap;
+
+    Dictionary<string, Sprite> installedObjectSprites;
 
     public World World { get; protected set; }
 
     // Start is called before the first frame update
     void Start() {
+
+        installedObjectSprites = new Dictionary<string, Sprite>();
+        Sprite[] sprites = Resources.LoadAll<Sprite>("Images/InstalledObjects");
+
+        Debug.Log("Loaded resource:");
+        foreach(Sprite sprite in sprites) {
+            Debug.Log(sprite.name);
+            installedObjectSprites[sprite.name] = sprite;
+        }
 
         if(Instance != null) {
             Debug.LogError("There should never be two world controllers.");
@@ -107,7 +117,8 @@ public class WorldController : MonoBehaviour {
         objGameObject.transform.SetParent(this.transform, true);
 
         // Add a sprite renderer and assume it's a wall for now.
-        objGameObject.AddComponent<SpriteRenderer>().sprite = wallSprite;
+        objGameObject.AddComponent<SpriteRenderer>().sprite = installedObjectSprites["Wall_"];
+        objGameObject.GetComponent<SpriteRenderer>().sortingOrder = 1;
 
         // Register a callback to the WorldController here so we can update the GameObject whenever
         // the underlying InstalledObject changes.
