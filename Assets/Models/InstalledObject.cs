@@ -10,7 +10,7 @@ public class InstalledObject {
     float movementCost; // A movementCost of zero is impassable (e.g. a wall).
     int width;
     int height;
-    bool linksToNeighbour = false;
+    public bool linksToNeighbour { get; protected set; }
     Action<InstalledObject> callbackOnChanged;
 
     protected InstalledObject() {

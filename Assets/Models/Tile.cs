@@ -16,7 +16,8 @@ public class Tile {
     public int Y { get; protected set; }
 
     LooseObject looseObject;
-    InstalledObject installedObject;
+    
+    public InstalledObject installedObject { get; protected set; }
 
     public TileType Type {
         get { return _type; }

@@ -117,12 +117,49 @@ public class WorldController : MonoBehaviour {
         objGameObject.transform.SetParent(this.transform, true);
 
         // Add a sprite renderer and assume it's a wall for now.
-        objGameObject.AddComponent<SpriteRenderer>().sprite = installedObjectSprites["Wall_"];
+        objGameObject.AddComponent<SpriteRenderer>().sprite = GetSpriteForInstalledObject(obj);
         objGameObject.GetComponent<SpriteRenderer>().sortingOrder = 1;
 
         // Register a callback to the WorldController here so we can update the GameObject whenever
         // the underlying InstalledObject changes.
         obj.RegisterOnChangedCallback(OnInstalledObjectChanged);
+    }
+
+    Sprite GetSpriteForInstalledObject(InstalledObject obj) {
+        if(obj.linksToNeighbour == false) {
+            return installedObjectSprites[obj.objectType];
+        }
+
+        string spriteName = $"{obj.objectType}_";
+        
+        int x = obj.tile.X;
+        int y = obj.tile.Y;
+
+        Tile t;
+        // There's a tile to the neighbouring direction, it has an installed object, and it's the same time as the current object type.
+        t= World.GetTileAt(x, y + 1); // North.
+        if(t != null && t.installedObject != null && t.installedObject.objectType == obj.objectType) {
+            spriteName += "N";
+        }
+        t= World.GetTileAt(x, y - 1); // South.
+        if(t != null && t.installedObject != null && t.installedObject.objectType == obj.objectType) {
+            spriteName += "S";
+        }
+        t= World.GetTileAt(x + 1, y); // East.
+        if(t != null && t.installedObject != null && t.installedObject.objectType == obj.objectType) {
+            spriteName += "E";
+        }
+        t= World.GetTileAt(x - 1, y); // West.
+        if(t != null && t.installedObject != null && t.installedObject.objectType == obj.objectType) {
+            spriteName += "W";
+        }
+
+        if(installedObjectSprites.ContainsKey(spriteName) == false) {
+            Debug.LogError($"GetSpriteForInstalledObject -- No sprite with name {spriteName}.");
+            return null;
+        }
+
+        return installedObjectSprites[spriteName];
     }
 
     // Callback registered to the InstalledObject. Called whenever the object changes so that
