@@ -141,13 +141,13 @@ public class WorldController : MonoBehaviour {
         if(t != null && t.installedObject != null && t.installedObject.objectType == obj.objectType) {
             spriteName += "N";
         }
-        t= World.GetTileAt(x, y - 1); // South.
-        if(t != null && t.installedObject != null && t.installedObject.objectType == obj.objectType) {
-            spriteName += "S";
-        }
         t= World.GetTileAt(x + 1, y); // East.
         if(t != null && t.installedObject != null && t.installedObject.objectType == obj.objectType) {
             spriteName += "E";
+        }
+        t= World.GetTileAt(x, y - 1); // South.
+        if(t != null && t.installedObject != null && t.installedObject.objectType == obj.objectType) {
+            spriteName += "S";
         }
         t= World.GetTileAt(x - 1, y); // West.
         if(t != null && t.installedObject != null && t.installedObject.objectType == obj.objectType) {
@@ -165,6 +165,14 @@ public class WorldController : MonoBehaviour {
     // Callback registered to the InstalledObject. Called whenever the object changes so that
     // we can keep the corresponding GameObject up to date.
     void OnInstalledObjectChanged(InstalledObject obj) {
-        Debug.LogError("OnInstalledObjectChanged - Not implemented.");
+
+        if(installedObjectGameObjectMap.ContainsKey(obj) == false) {
+            Debug.LogError("OnInstalledObjectChanged - Trying to change visuals for game object not in our map.");
+            return;
+        }
+
+        GameObject gameObject = installedObjectGameObjectMap[obj];
+        gameObject.GetComponent<SpriteRenderer>().sprite = GetSpriteForInstalledObject(obj);
+
     }
 }

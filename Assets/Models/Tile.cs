@@ -11,7 +11,7 @@ public class Tile {
 
     Action<Tile> callbackTileTypeChanged;
     
-    World world;
+    public World world { get; protected set; }
     public int X { get; protected set; }
     public int Y { get; protected set; }
 

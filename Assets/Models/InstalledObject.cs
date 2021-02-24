@@ -45,6 +45,31 @@ public class InstalledObject {
             return null;
         };
 
+        if(obj.linksToNeighbour) {
+
+            Tile t;
+            int x = tile.X;
+            int y = tile.Y;
+
+            // Inform neighbours that they have a new neighbour by triggering OnChanged callback.
+            t = tile.world.GetTileAt(x, y + 1); // North.
+            if(t != null && t.installedObject != null && t.installedObject.objectType == obj.objectType) {
+                t.installedObject.callbackOnChanged(t.installedObject);
+            }
+            t= tile.world.GetTileAt(x, y - 1); // South.
+            if(t != null && t.installedObject != null && t.installedObject.objectType == obj.objectType) {
+                t.installedObject.callbackOnChanged(t.installedObject);
+            }
+            t= tile.world.GetTileAt(x + 1, y); // East.
+            if(t != null && t.installedObject != null && t.installedObject.objectType == obj.objectType) {
+                t.installedObject.callbackOnChanged(t.installedObject);
+            }
+            t= tile.world.GetTileAt(x - 1, y); // West.
+            if(t != null && t.installedObject != null && t.installedObject.objectType == obj.objectType) {
+                t.installedObject.callbackOnChanged(t.installedObject);
+            }
+        }
+
         return obj;
     }
 
